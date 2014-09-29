@@ -224,7 +224,7 @@ module.exports = function(app){
     app.get('/edit/:name/:day/:title', checkLogin);
     app.get('/edit/:name/:day/:title', function (req, res) {
         var currentUser = req.session.user;
-        Post.edit(currentUser, req.params.day, req.params.title, function (err, post) {
+        Post.edit(currentUser.name, req.params.day, req.params.title, function (err, post) {
             if (err) {
                 req.flash('error', err);
                 res.redirect('back');
@@ -239,7 +239,21 @@ module.exports = function(app){
         });
     });
 
-
+    // Post - /edit/name/day/title
+    app.post('/edit/:name/:day/:title', checkLogin);
+    app.post('/edit/:name/:day/:title', function (req, res) {
+        var currentUser = req.session.user;
+        Post.update(currentUser.name, req.params.day, req.params.title, req.body.post, function(err){
+            var url = '/u/' + req.params.name + '/' + req.params.day + '/' + req.params.title;
+            if(err){
+                req.flash('error', err);
+                res.redirect(url);
+            }
+            req.flash('success', "修改成功!");
+            console.log(url);
+            res.redirect(url);
+        });
+    });
 
 
     // 路由中间件，处理url权限
