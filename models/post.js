@@ -118,7 +118,7 @@ Post.getOne = function (name, day, title, callback) {
                 if(doc){
                     doc.post = markdown.toHTML(doc.post);
                     doc.comments.forEach(function (comment) {
-                        comment.content = markdown.toHTML(comment);
+                        comment.content = markdown.toHTML(comment.content);
                     });
                 }
                 return callback(null, doc);
