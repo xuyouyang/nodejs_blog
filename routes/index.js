@@ -27,7 +27,6 @@ module.exports = function(app){
                 page: page,
                 isFirstPage: (page - 1) == 0,
                 isLastPage: ((page - 1) * 10 + posts.length) == total,
-                user: req.session.user,
                 success: req.flash('success').toString(),
                 error: req.flash('error').toString()
             });
@@ -136,7 +135,8 @@ module.exports = function(app){
     app.post('/post', function (req, res) {
         // 处理用户发表文章
         var currentUser = req.session.user;
-        var post = new Post(currentUser.name, req.body.title, req.body.post);
+        var tags = [req.body.tag1, req.body.tag2, req.body.tag3];
+        var post = new Post(currentUser.name, req.body.title, tags, req.body.post);
         post.save(function(err){
             if(err){
                 req.flash('error',err);
@@ -185,7 +185,56 @@ module.exports = function(app){
         res.redirect('/upload');
     });
 
-    
+    // Get - /archive
+    app.get('/archive', function(req, res){
+        Post.getArchive(function(err, posts){
+            if(err){
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+            res.render('archive', {
+                title: '存档',
+                posts: posts,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+    });
+
+    // Get - /tags
+    app.get('/tags', function(req, res){
+        Post.getTags(function (err, posts) {
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+            res.render('tags', {
+                title: '标签',
+                posts: posts,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+    });
+
+    // Get - /tags/tag
+    app.get('/tags/:tag', function(req, res){
+        Post.getTag(req.params.tag, function (err, posts) {
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+            res.render('tag',{
+                title: 'TAG:' + req.params.tag,
+                posts: posts,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+    });
 
     // Get - /u/name
     app.get('/u/:name', function(req, res){
