@@ -136,7 +136,7 @@ module.exports = function(app){
         // 处理用户发表文章
         var currentUser = req.session.user;
         var tags = [req.body.tag1, req.body.tag2, req.body.tag3];
-        var post = new Post(currentUser.name, req.body.title, tags, req.body.post);
+        var post = new Post(currentUser.name, currentUser.avatar, req.body.title, tags, req.body.post);
         post.save(function(err){
             if(err){
                 req.flash('error',err);
@@ -305,8 +305,12 @@ module.exports = function(app){
         var date = new Date();
         var time = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +
             date.getHours() + ":" + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+        var md5 = crypto.createHash('md5');
+        var email_MD5 = md5.update(req.body.email.toLowerCase()).digest('hex');
+        var avatar = "http://www.gravatar.com/avatar/" + email_MD5 + "?s=48";
         var comment = {
             name: req.body.name,
+            avatar: avatar,
             email: req.body.email,
             website: req.body.website,
             time: time,
@@ -370,6 +374,11 @@ module.exports = function(app){
             req.flash('success', '删除成功！');
             res.redirect('/');
         });
+    });
+
+    // 错误页面错误404
+    app.use(function(req, res){
+        res.render("404");
     });
 
     // 路由中间件，处理url权限
