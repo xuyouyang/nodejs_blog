@@ -2,7 +2,6 @@
  * Created by xu on 14-9-27.
  */
 var mongodb = require('./db');
-var markdown = require('markdown').markdown;
 
 function Post(name, avatar, title, tags, post) {
     this.name = name;
@@ -92,10 +91,6 @@ Post.getTen = function (name, page, callback) {
                     if(err){
                         return callback(err);
                     }
-                    //解析markdown为html
-                    docs.forEach(function (doc) {
-                        doc.post = markdown.toHTML(doc.post);
-                    });
                     return callback(null, docs, total);
                 });
             });
@@ -139,10 +134,6 @@ Post.getOne = function (name, day, title, callback) {
                         if (err) {
                             return callback(err);
                         }
-                    });
-                    doc.post = markdown.toHTML(doc.post);
-                    doc.comments.forEach(function (comment) {
-                        comment.content = markdown.toHTML(comment.content);
                     });
                     return callback(null, doc);
                 }
