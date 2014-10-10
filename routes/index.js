@@ -11,6 +11,12 @@ var Comment = require('../models/comment');
 
 module.exports = function(app){
 
+    app.get('/ios', function(req, res){
+        res.send({
+            key: 'value'
+        });
+    });
+
     // Get - home
     app.get('/', function (req, res){
         //判断是否为第一页，并把请求的页数转换成number类型
@@ -282,15 +288,17 @@ module.exports = function(app){
         });
     });
 
-    // Get - /u/name/day/title
-    app.get('/u/:name/:day/:title', function (req, res) {
-        Post.getOne(req.params.name, req.params.day, req.params.title, function (err, post) {
+    // Get - /u/name/article/detail/:id
+    app.get('/u/:name/article/detail/:articleID', function (req, res) {
+        console.log(req.params.articleID);
+        Post.getOne(req.params.articleID, function (err, post) {
             if (err) {
                 req.flash('error', err);
                 return res.redirect('/');
             }
+            console.log(post);
             res.render('article', {
-                title: req.params.title,
+                title: post.title,
                 post: post,
                 user: req.session.user,
                 success: req.flash('success').toString(),
@@ -298,6 +306,23 @@ module.exports = function(app){
             });
         });
     });
+
+    // Get - /u/name/day/title
+//    app.get('/u/:name/:day/:title', function (req, res) {
+//        Post.getOne(req.params.name, req.params.day, req.params.title, function (err, post) {
+//            if (err) {
+//                req.flash('error', err);
+//                return res.redirect('/');
+//            }
+//            res.render('article', {
+//                title: req.params.title,
+//                post: post,
+//                user: req.session.user,
+//                success: req.flash('success').toString(),
+//                error: req.flash('error').toString()
+//            });
+//        });
+//    });
 
     // Post - /u/name/day/title
     // 提交留言
@@ -397,4 +422,5 @@ module.exports = function(app){
         }
         next();
     }
+
 };

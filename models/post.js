@@ -2,6 +2,7 @@
  * Created by xu on 14-9-27.
  */
 var mongodb = require('./db');
+var mongo = require('mongoskin');
 
 function Post(name, avatar, title, tags, post) {
     this.name = name;
@@ -98,8 +99,8 @@ Post.getTen = function (name, page, callback) {
     });
 };
 
-//获取一篇文章
-Post.getOne = function (name, day, title, callback) {
+// 根据文章id获取一篇文章的内容
+Post.getOne = function (articleID, callback) {
     //打开数据库
     mongodb.open (function (err, db) {
         if (err) {
@@ -111,12 +112,11 @@ Post.getOne = function (name, day, title, callback) {
                 mongodb.close();
                 return callback(err);
             }
-            //根据用户名、发表日期、文章标题进行查询
+            //根据用户名、文章id进行查询
             collection.findOne({
-                "name": name,
-                "time.day": day,
-                "title": title,
+                _id: new mongo.ObjectID(articleID)
             }, function (err, doc) {
+                console.log("doc"+doc);
                 if (err) {
                     mongodb.close();
                     return callback(err);
@@ -124,9 +124,7 @@ Post.getOne = function (name, day, title, callback) {
                 if (doc) {
                     //每访问1次，pv值增加1
                     collection.update({
-                        "name": name,
-                        "time.day": day,
-                        "title": title
+                        _id: new mongo.ObjectID(articleID)
                     }, {
                         $inc: {"pv": 1}
                     }, function(err){
