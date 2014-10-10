@@ -115,7 +115,7 @@ Post.getOne = function (name, day, title, callback) {
             collection.findOne({
                 "name": name,
                 "time.day": day,
-                "title": title
+                "title": title,
             }, function (err, doc) {
                 if (err) {
                     mongodb.close();
