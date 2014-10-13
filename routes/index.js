@@ -299,8 +299,8 @@ module.exports = function(app){
         });
     });
 
-    // Get - /u/name/article/detail/:id
-    app.get('/u/:name/article/detail/:articleID', function (req, res) {
+    // Get - /u/name/blog/detail/:id
+    app.get('/u/:name/blog/detail/:articleID', function (req, res) {
         console.log(req.params.articleID);
         Post.getOne(req.params.articleID, function (err, post) {
             if (err) {
