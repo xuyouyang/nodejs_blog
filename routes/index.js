@@ -18,26 +18,37 @@ module.exports = function(app){
     });
 
     // Get - home
-    app.get('/', function (req, res){
-        //判断是否为第一页，并把请求的页数转换成number类型
-        var page = req.query.p ? parseInt(req.query.p) : 1;
-        //查询并返回第page页的10篇文章
-        Post.getTen(null, page, function (err, posts, total) {
+    app.get('/', function (req, res) {
+        Post.getTen(null, 1, function (err, posts, total) {
             if (err) {
                 posts = [];
             }
-            res.render('index', {
-                title: '主页',
-                user: req.session.user,
-                posts: posts,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 10 + posts.length) == total,
-                success: req.flash('success').toString(),
-                error: req.flash('error').toString()
+            res.render('front/index', {
+                posts: posts
             });
-        });
+        })
     });
+//    app.get('/', function (req, res) {
+//        res.render('index', {
+//        //判断是否为第一页，并把请求的页数转换成number类型
+//        var page = req.query.p ? parseInt(req.query.p) : 1;
+//        //查询并返回第page页的10篇文章
+//        Post.getTen(null, page, function (err, posts, total) {
+//            if (err) {
+//                posts = [];
+//            }
+//            res.render('/front/index.ejs', {
+//                title: '主页',
+//                user: req.session.user,
+//                posts: posts,
+//                page: page,
+//                isFirstPage: (page - 1) == 0,
+//                isLastPage: ((page - 1) * 10 + posts.length) == total,
+//                success: req.flash('success').toString(),
+//                error: req.flash('error').toString()
+//            });
+//        });
+//    });
 
     // Get - reg
     app.get('/reg', checkNotLogin);

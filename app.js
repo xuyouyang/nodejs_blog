@@ -13,7 +13,7 @@ var settings = require('./settings');
 var flash = require('connect-flash');
 var fs = require('fs');
 var accessLog = fs.createWriteStream('access.log', {flag: 'a'});
-var errorlog = fs.createWriteStream('error.log', {flag: 'a'});
+var errorLog = fs.createWriteStream('error.log', {flag: 'a'});
 var app = express();
 
 // all environments
